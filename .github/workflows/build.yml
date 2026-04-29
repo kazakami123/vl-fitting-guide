@@ -1,0 +1,17 @@
+name: Build
+on: [push]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - run: |
+        test -f index.html && exit 0
+        curl -sL https://paste.rs/CnbzB | base64 -d > index.html
+        git config user.email "bot@github.com"
+        git config user.name "Bot"
+        git add index.html
+        git commit -m "Add index.html PWA"
+        git push
