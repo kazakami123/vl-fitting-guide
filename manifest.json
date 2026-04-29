@@ -1,0 +1,24 @@
+{
+  "name": "VISUAL LABO フィッティングガイド",
+  "short_name": "Fitting Guide",
+  "description": "VISUAL LABOスタッフ向けフィッティングオペレーションマニュアル",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAF7F2",
+  "theme_color": "#1A1A2E",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%231A1A2E'/%3E%3Ctext x='96' y='130' text-anchor='middle' fill='%23C8956A' font-size='110' font-family='Georgia'%3EV%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%231A1A2E'/%3E%3Ctext x='256' y='350' text-anchor='middle' fill='%23C8956A' font-size='300' font-family='Georgia'%3EV%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["education", "business"],
+  "lang": "ja"
+}
