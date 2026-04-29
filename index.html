@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fitting Guide">
+<meta name="theme-color" content="#1A1A2E">
+<link rel="manifest" href="./manifest.json">
+<title>VISUAL LABO フィッティングガイド</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #FAF7F2;
+  --surface: #FFFFFF;
+  --navy:    #1A1A2E;
+  --gold:    #C8956A;
+  --gold-lt: #E8C9A8;
+  --slate:   #4A4A6A;
+  --text:    #2C2C2C;
+  --text-lt: #7A7A8A;
+  --border:  #E5DDD4;
+  --ok:      #2D6A4F;
+  --ng:      #9B2226;
+  --warn:    #B5541A;
+  --cream:   #F5F0EA;
+  --inset:   env(safe-area-inset-bottom, 0px);
+  --ff-disp: 'Cormorant Garamond', 'Hiragino Mincho ProN', serif;
+  --ff-body: 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+}
+
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--ff-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* ── App Shell ── */
+#app { display: flex; flex-direction: column; height: 100dvh; }
+
+/* ── Header ── */
+.app-header {
+  background: var(--navy);
+  color: white;
+  padding: 0 1rem;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+  padding-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+.app-header .back-btn {
+  width: 36px; height: 36px;
+  border: none; background: rgba(255,255,255,0.12);
+  border-radius: 50%; color: white;
+  font-size: 1.1rem; cursor: pointer;
+  display: none; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.app-header .back-btn.show { display: flex; }
+.app-header .title-wrap { flex: 1; min-width: 0; }
+.app-header .brand {
+  font-family: var(--ff-disp);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  color: var(--gold-lt);
+  text-transform: uppercase;
+}
+.app-header h1 {
+  font-size: 1rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+.search-btn {
+  width: 36px; height: 36px;
+  border: none; background: rgba(255,255,255,0.12);
+  border-radius: 50%; color: white;
+  font-size: 1.1rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── Search Bar ── */
+.search-bar {
+  background: var(--navy);
+  padding: 0 1rem 0.75rem;
+  display: none;
+}
+.search-bar.show { display: block; }
+.search-bar input {
+  width: 100%;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 999px;
+  color: white;
+  font-family: var(--ff-body);
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  outline: none;
+}
+.search-bar input::placeholder { color: rgba(255,255,255,0.4); }
+
+/* ── Main Content ── */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding-bottom: calc(4rem + var(--inset));
+}
+
+/* ── Bottom Nav ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--navy);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding-bottom: var(--inset);
+  z-index: 100;
+  box-shadow: 0 -2px 20px rgba(0,0,0,0.25);
+}
+.nav-btn {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0.2rem;
+  padding: 0.65rem 0;
+  border: none; background: none; cursor: pointer;
+  color: rgba(255,255,255,0.45);
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-btn.active { color: var(--gold); }
+.nav-btn .icon { font-size: 1.25rem; line-height: 1; }
+.nav-btn .label { font-size: 0.6rem; font-family: var(--ff-body); letter-spacing: 0.03em; }
+.nav-btn.active::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 25%; right: 25%;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 0 0 2px 2px;
+}
+
+/* ── Pages ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── Home Page ── */
+.home-hero {
+  background: var(--navy);
+  color: white;
+  padding: 2rem 1.25rem 1.5rem;
+  text-align: center;
+}
+.home-hero .hero-icon {
+  font-family: var(--ff-disp);
+  font-size: 3.5rem;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+.home-hero p {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.06em;
+}
+
+.chapter-grid {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.chapter-card {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.chapter-card:active { transform: scale(0.98); }
+.chapter-num {
+  width: 42px; height: 42px;
+  background: var(--navy);
+  color: var(--gold);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--ff-disp);
+  font-size: 1.1rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.chapter-info { flex: 1; min-width: 0; }
+.chapter-info .chapter-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.3;
+}
+.chapter-info .chapter-sub {
+  font-size: 0.72rem;
+  color: var(--text-lt);
+  margin-top: 0.15rem;
+}
+.chapter-arrow { color: var(--gold); font-size: 0.9rem; flex-shrink: 0; }
+
+/* ── Chapter Detail ── */
+.detail-content {
+  padding: 1.25rem;
+}
+
+.section-block {
+  margin-bottom: 1.75rem;
+}
+.section-h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--gold);
+  margin-bottom: 1rem;
+}
+.section-h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--slate);
+  margin-bottom: 0.5rem;
+  margin-top: 0.75rem;
+}
+.body-text {
+  font-size: 0.85rem;
+  line-height: 1.75;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+
+/* Step card */
+.step-card {
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+.step-header {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  background: var(--surface);
+  transition: background 0.15s;
+}
+.step-header:active { background: var(--cream); }
+.step-num {
+  width: 34px; height: 34px;
+  background: var(--navy);
+  color: var(--gold);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: 700;
+  flex-shrink: 0;
+}
+.step-title { flex: 1; font-size: 0.88rem; font-weight: 700; color: var(--navy); line-height: 1.3; }
+.step-toggle { color: var(--gold); font-size: 0.8rem; flex-shrink: 0; transition: transform 0.25s ease; }
+.step-toggle.open { transform: rotate(180deg); }
+.step-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease;
+  background: #FDFCFA;
+  border-top: 1px solid var(--border);
+}
+.step-body.open { grid-template-rows: 1fr; }
+.step-inner { overflow: hidden; }
+.step-content { padding: 0.9rem 1rem 1rem; }
+
+.purpose-tag {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  background: rgba(200,149,106,0.1);
+  color: var(--warn);
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin-bottom: 0.65rem;
+}
+
+.check-list, .bullet-list { list-style: none; margin-bottom: 0.75rem; }
+.check-list li, .bullet-list li {
+  display: flex; align-items: flex-start; gap: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--text);
+  line-height: 1.6;
+  padding: 0.2rem 0;
+}
+.check-list li::before { content: '✓'; color: var(--ok); font-weight: 700; flex-shrink: 0; margin-top: 0.05rem; }
+.bullet-list li::before { content: '▸'; color: var(--gold); flex-shrink: 0; margin-top: 0.05rem; }
+
+.quote-block {
+  background: rgba(26,26,46,0.04);
+  border-left: 3px solid var(--gold);
+  padding: 0.65rem 0.85rem;
+  margin: 0.5rem 0;
+  border-radius: 0 8px 8px 0;
+}
+.quote-block .label { font-size: 0.68rem; color: var(--gold); font-weight: 700; margin-bottom: 0.2rem; }
+.quote-block p { font-size: 0.82rem; color: var(--slate); font-style: italic; line-height: 1.6; }
+
+.note-block {
+  background: rgba(181,84,26,0.06);
+  border: 1px solid rgba(181,84,26,0.2);
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  margin-top: 0.5rem;
+}
+.note-block p { font-size: 0.78rem; color: var(--warn); line-height: 1.6; }
+.note-block p::before { content: '※ '; font-weight: 700; }
+
+/* Info table */
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.info-table th {
+  background: var(--navy);
+  color: var(--gold-lt);
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+.info-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.6;
+  color: var(--text);
+}
+.info-table tr:last-child td { border-bottom: none; }
+.info-table tr:nth-child(odd) td { background: #FDFCFA; }
+.info-table tr:nth-child(even) td { background: var(--cream); }
+
+/* NG/OK table */
+.ngok-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 0.75rem;
+}
+.ngok-table .th-ng { background: #FEF0F0; color: var(--ng); padding: 0.5rem 0.65rem; font-weight: 700; font-size: 0.73rem; }
+.ngok-table .th-ok { background: #F0FFF4; color: var(--ok); padding: 0.5rem 0.65rem; font-weight: 700; font-size: 0.73rem; }
+.ngok-table td { padding: 0.5rem 0.65rem; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.55; }
+.ngok-table .td-ng { color: var(--ng); background: #FFF8F8; }
+.ngok-table .td-ok { color: var(--ok); background: #F8FFF9; }
+.ngok-table tr:last-child td { border-bottom: none; }
+
+/* Failure card */
+.failure-card {
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+.failure-header {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  background: var(--surface);
+  -webkit-tap-highlight-color: transparent;
+}
+.failure-header:active { background: var(--cream); }
+.failure-badge {
+  background: #FEF0F0;
+  color: var(--ng);
+  border-radius: 6px;
+  padding: 0.2rem 0.45rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.failure-title { flex: 1; font-size: 0.88rem; font-weight: 700; color: var(--navy); }
+.failure-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease;
+  background: #FDFCFA;
+  border-top: 1px solid var(--border);
+}
+.failure-body.open { grid-template-rows: 1fr; }
+.failure-inner { overflow: hidden; }
+.failure-content { padding: 0.9rem 1rem 1rem; }
+
+.row-ng, .row-ok, .row-why {
+  display: flex; gap: 0.4rem;
+  font-size: 0.81rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+.row-label {
+  font-weight: 700;
+  flex-shrink: 0;
+  font-size: 0.73rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 4px;
+  height: fit-content;
+  margin-top: 0.15rem;
+}
+.row-ng .row-label { background: #FEF0F0; color: var(--ng); }
+.row-ok .row-label { background: #F0FFF4; color: var(--ok); }
+.row-why .row-label { background: #F0F4FF; color: var(--slate); }
+
+/* ── Checklist Page ── */
+.checklist-progress {
+  background: var(--navy);
+  padding: 1.25rem;
+  text-align: center;
+}
+.progress-bar-wrap {
+  background: rgba(255,255,255,0.12);
+  border-radius: 999px;
+  height: 6px;
+  margin: 0.75rem 0 0.4rem;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+.progress-text { color: rgba(255,255,255,0.7); font-size: 0.78rem; }
+.progress-count { color: var(--gold-lt); font-size: 1.3rem; font-weight: 700; }
+
+.checklist-reset {
+  display: block;
+  margin: 0 1.25rem 0;
+  padding: 0.5rem;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  color: rgba(255,255,255,0.6);
+  font-family: var(--ff-body);
+  font-size: 0.78rem;
+  cursor: pointer;
+  width: calc(100% - 2.5rem);
+  transition: all 0.15s;
+}
+.checklist-reset:active { background: rgba(255,255,255,0.1); }
+
+.checklist-section { padding: 1rem 1.25rem; }
+.cl-section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-lt);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+  margin-top: 0.5rem;
+}
+.cl-item {
+  display: flex; align-items: flex-start; gap: 0.75rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.cl-item:last-child { border-bottom: none; }
+.cl-checkbox {
+  width: 22px; height: 22px;
+  border: 2px solid var(--border);
+  border-radius: 5px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  margin-top: 0.05rem;
+}
+.cl-item.checked .cl-checkbox {
+  background: var(--ok);
+  border-color: var(--ok);
+  color: white;
+}
+.cl-item.checked .cl-checkbox::after { content: '✓'; font-size: 0.75rem; font-weight: 700; }
+.cl-text {
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--text);
+  flex: 1;
+}
+.cl-item.checked .cl-text { color: var(--text-lt); text-decoration: line-through; text-decoration-color: var(--ok); }
+
+/* ── Knowledge Page ── */
+.knowledge-nav {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0.75rem 1.25rem;
+  gap: 0.5rem;
+}
+.knowledge-nav::-webkit-scrollbar { display: none; }
+.kn-btn {
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.78rem;
+  font-family: var(--ff-body);
+  color: var(--text-lt);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.kn-btn.active {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--gold-lt);
+}
+.kn-section { display: none; padding: 0 1.25rem 1rem; }
+.kn-section.active { display: block; }
+
+/* Principle card */
+.principle-card {
+  background: var(--surface);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.6rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+.principle-num {
+  width: 28px; height: 28px;
+  background: var(--gold);
+  color: white;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 700;
+  flex-shrink: 0;
+}
+.principle-text { font-size: 0.85rem; line-height: 1.65; color: var(--text); }
+
+/* Trouble table */
+.trouble-card {
+  background: var(--surface);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+.trouble-symptom {
+  background: var(--cream);
+  padding: 0.6rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--navy);
+  border-bottom: 1px solid var(--border);
+}
+.trouble-detail { padding: 0.65rem 0.85rem; }
+.trouble-row { display: flex; gap: 0.4rem; margin-bottom: 0.3rem; font-size: 0.8rem; line-height: 1.55; }
+.trouble-label { font-weight: 700; color: var(--slate); flex-shrink: 0; }
+
+/* Search results */
+.search-results { padding: 1rem 1.25rem; }
+.search-result-item {
+  background: var(--surface);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.6rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.search-result-item:active { background: var(--cream); }
+.sr-chapter { font-size: 0.7rem; color: var(--gold); font-weight: 700; margin-bottom: 0.2rem; }
+.sr-title { font-size: 0.88rem; font-weight: 700; color: var(--navy); }
+.sr-snippet { font-size: 0.78rem; color: var(--text-lt); margin-top: 0.2rem; line-height: 1.5; }
+mark { background: rgba(200,149,106,0.25); border-radius: 2px; padding: 0 0.1em; }
+
+/* ── Animations ── */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page.active { animation: fadeSlideIn 0.25s ease; }
+</style>
+</head>
+
+<body>
+<div id="app">
+
+  <!-- Header -->
+  <header class="app-header">
+    <button class="back-btn" id="backBtn" onclick="goBack()">‹</button>
+    <div class="title-wrap">
+      <div class="brand">VISUAL LABO</div>
+      <h1 id="headerTitle">フィッティングガイド</h1>
+    </div>
+    <button class="search-btn" onclick="toggleSearch()">🔍</button>
+  </header>
+
+  <!-- Search Bar -->
+  <div class="search-bar" id="searchBar">
+    <input type="search" id="searchInput" placeholder="キーワードで検索…" oninput="doSearch(this.value)">
+  </div>
+
+  <!-- Main -->
+  <main class="main-content">
+
+    <!-- Search Results -->
+    <div id="searchResultsPage" style="display:none;">
+      <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <!-- Page: Home -->
+    <div class="page active" id="pageHome">
+      <div class="home-hero">
+        <div class="hero-icon">V</div>
+        <p>FITTING OPERATION MANUAL</p>
+      </div>
+      <div class="chapter-grid" id="chapterGrid"></div>
+    </div>
+
+    <!-- Page: Chapter Detail -->
+    <div class="page" id="pageDetail">
+      <div class="detail-content" id="detailContent"></div>
+    </div>
+
+    <!-- Page: Checklist -->
+    <div class="page" id="pageChecklist">
+      <div class="checklist-progress">
+        <div class="progress-count"><span id="clDone">0</span> / <span id="clTotal">0</span></div>
+        <div class="progress-bar-wrap"><div class="progress-bar" id="clBar"></div></div>
+        <div class="progress-text">フィッティングチェックリスト</div>
+      </div>
+      <button class="checklist-reset" onclick="resetChecklist()">✕ リセット</button>
+      <div class="checklist-section" id="checklistContent"></div>
+    </div>
+
+    <!-- Page: Knowledge -->
+    <div class="page" id="pageKnowledge">
+      <nav class="knowledge-nav" id="knowledgeNav"></nav>
+      <div id="knowledgeContent"></div>
+    </div>
+
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" id="navHome" onclick="showTab('Home')">
+      <span class="icon">📖</span><span class="label">チャプター</span>
+    </button>
+    <button class="nav-btn" id="navFlow" onclick="showTab('Flow')">
+      <span class="icon">▶</span><span class="label">フロー</span>
+    </button>
+    <button class="nav-btn" id="navChecklist" onclick="showTab('Checklist')">
+      <span class="icon">☑</span><span class="label">チェック</span>
+    </button>
+    <button class="nav-btn" id="navKnowledge" onclick="showTab('Knowledge')">
+      <span class="icon">💡</span><span class="label">知識</span>
+    </button>
+  </nav>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════
+const CHAPTERS = [
+  { id: 1, title: "フィッティングの根本思想", sub: "7原則・VISUAL LABOの意義", icon: "🌟" },
+  { id: 2, title: "フィッティングフロー 全17ステップ", sub: "来店〜ノンワイヤーまで完全網羅", icon: "📋" },
+  { id: 3, title: "フィッティング専門知識", sub: "アンダー・カップ・容量チェック", icon: "📐" },
+  { id: 4, title: "正しいつけ方指導", sub: "基本7ステップ＋詳細22ステップ", icon: "🤲" },
+  { id: 5, title: "よくある失敗パターン", sub: "9つのNG対応・お客様の誤解", icon: "⚠️" },
+  { id: 6, title: "トラブル別診断チャート", sub: "症状→原因→対処の早見表", icon: "🔍" },
+  { id: 7, title: "現場チェックリスト", sub: "全フロー□形式・新人合格ライン", icon: "✅" },
+  { id: 8, title: "NG・OK表現集", sub: "接客・指導・共感の言葉", icon: "💬" },
+];
+
+const FITTING_STEPS = [
+  {
+    num:"①", title:"カウンセリングシート記入",
+    purpose:"お客様の現状と目的を把握する",
+    checks:["カウンセリングシートをお渡しし、記入時間を確保する","急かさず、自由に書いてもらう"],
+    talks:[],
+    note:""
+  },
+  {
+    num:"②", title:"シートを見ながらカウンセリング",
+    purpose:"一番の悩みを共有し、今日の目標を設定する",
+    checks:["現状のサイズを確認","普段の購入方法（店舗/ネット/試着の有無）を聞く","「一番困っていること」を一つに絞る"],
+    talks:["今日は、こちらの一番のお悩みが改善されるように、他のチェック項目も一緒に良くなっているか確認しながら進めますね"],
+    note:""
+  },
+  {
+    num:"③", title:"サイズ感・好みの確認",
+    purpose:"お客様が求めるフィット感を把握する",
+    checks:["ピッタリめか、ゆとりめかを確認","肉質を見て、補正サイズの可能性も提示"],
+    talks:["肉質によっては、バスト周りのお肉を入れられる場合もあるので、ピッタリめと、しっかり集めて入れる補正メインと、お好みのフィット感を選んでいただけます"],
+    note:"ノンワイヤーも両方の選択肢を提示する。"
+  },
+  {
+    num:"④", title:"ビフォーアフター撮影のご案内",
+    purpose:"変化を視覚化し、納得感を高める",
+    checks:["お洋服姿とブラ姿の撮影を提案","写真提供での割引を説明"],
+    talks:["お洋服姿とブラ姿で、ビフォーアフターを撮ると違いがとても分かりやすいのですが、よろしければ撮影しますか？"],
+    note:"無理に押しつけず、お客様の意思を尊重する。"
+  },
+  {
+    num:"⑤", title:"写真撮影（洋服姿）",
+    purpose:"ビフォー状態を記録する",
+    checks:["洋服姿を正面・横から撮影"],
+    talks:[], note:""
+  },
+  {
+    num:"⑥", title:"My Braチェックのご案内",
+    purpose:"現状のブラの問題点を客観的に確認する",
+    checks:["「今お使いのブラの状態を確認します」と目的を明確に伝える","ブラ姿ビフォー撮影を行う"],
+    talks:["今お使いのブラの状態を確認していきますので、上半身ブラ姿になれたら教えてください"],
+    note:""
+  },
+  {
+    num:"⑦", title:"アンダーベルトチェック",
+    purpose:"現在のブラの土台の状態を確認する",
+    checks:["後ろがずり上がっていないか","ストラップを上に引き上げてもアンダーがずれないか","背中上辺の段差（肉の定着）を確認","アンダーが細い場合→フィット感を強めにしないとずれやすいと説明","段差がある場合→「今後は上辺にゴムのないものを」と伝える"],
+    talks:["背中の段差は一度つくとすぐには取れません。これ以上ひどくならない選択が大切です"],
+    note:"痒みが出るほど強くつけるのはNG。「支え」と「呼吸」の両立が基本。"
+  },
+  {
+    num:"⑧", title:"ストラップチェック",
+    purpose:"ストラップが土台の代わりになっていないかを確認する",
+    checks:["内側にきすぎていないか（肩のぽこっとした骨のあたりが目安）","サイズが小さいと自然と内側に寄ることを説明","「土台で支える、ストラップは補助」と必ず伝える"],
+    talks:["ストラップを調整するよりも、まず土台のアンダーを整えてみましょう"],
+    note:"ストラップ調整でカップから溢れる場合は、サイズ不足のサイン。"
+  },
+  {
+    num:"⑨", title:"バスト容量チェック",
+    purpose:"カップサイズが不足していないかを確認する",
+    checks:["入れても出てくる脇肉を確認","脇下のお肉を確認","背中のお肉を確認","脇までの空間 1cm ≒ 1カップ不足の法則で判断","共感の言葉を必ず伝える"],
+    talks:["今までサイズがなかなかなかったですよね","これはあなたが悪いのではありません","この世の中に売っていなかっただけです","合わせるものがなくて、辛かったですよね"],
+    note:"共感の言葉は毎回必ず使う。"
+  },
+  {
+    num:"⑩", title:"数値確認・追加チェック",
+    purpose:"正確なサイズ提案のためのデータを取る",
+    checks:["アンダーベルト実寸を計測（バストの付け根）","乳間チェック（18cm未満＝狭め）","乳下がりも確認","M'DREAのブラでどれくらい引き上がるかを見せる"],
+    talks:[], note:"バストを強調したい方→乳間が広めの設計がおすすめ。"
+  },
+  {
+    num:"⑪", title:"理想のバスト位置の説明",
+    purpose:"「理想の状態」を具体的にイメージしてもらう",
+    checks:["「鎖骨の真ん中・左右バストトップの正三角形」を説明","下垂の原因の多くはサイズが合っていないだけと説明"],
+    talks:["バストの円周とブラの円周が合うと、スポッと収まり自然に上に引き上げられます。下垂は体の問題ではなくブラの問題であることが多いんです"],
+    note:""
+  },
+  {
+    num:"⑫", title:"M'DREA ワイヤーブラのご提案",
+    purpose:"「答え合わせ」として自然に商品を提案する",
+    checks:["ここまでの説明をすべて終えてから商品を出す","「売る」のではなく「答え合わせ」として提案する","アンダー実寸目安を基準にサイズを当てる","複数サイズの可能性を必ず提示する"],
+    talks:["今見てきたポイントを踏まえて、今の体に合う設計のブラを一度着けてみましょう","さきほどお話しした アンダーの安定感・円周・引き上がり、ここがどう変わるかを体感してみてくださいね"],
+    note:"「サイズはあくまで基準値。決めつけない。最終判断はお客様に渡す」が鉄則。"
+  },
+  {
+    num:"⑬", title:"ワイヤーブラ サイズ合わせの実践",
+    purpose:"正確なフィットを確認し、変化を体感してもらう",
+    checks:["まず集めずにカップ部分だけでピッタリめを合わせる","次に腰・背中のお肉を入れてもらう","溢れた場合→サイズアップを提案（決めつけない）","フィット最終判断6点をすべて確認","「さっきお話ししていた変化、出ていますね」と変化をリンクさせて伝える"],
+    talks:["これ以上入らないので、サイズを上げる選択もありますが、いかがなさいますか？"],
+    note:"フィット最終判断：アンダー安定・ワイヤー輪郭まで埋まっている・腕上げで脇肉が出ない・姿勢を正すと上辺フラット。"
+  },
+  {
+    num:"⑭", title:"サイズ決定後の計測・撮影",
+    purpose:"変化を数値で記録し、満足感を提供する",
+    checks:["乳間と高さを計測（数値変化を見える化）","アフター撮影（ブラ姿）","アフター撮影（洋服姿）"],
+    talks:[], note:""
+  },
+  {
+    num:"⑮", title:"スリップの提案・試着",
+    purpose:"ランジェリーのスタイリングを完成させる",
+    checks:["下から履き上げてもらう","サイズ2パターン（身幅小さめ・カップ合わせ）を提案","用途（洋服の下・汗染み防止・旅行用等）を説明"],
+    talks:[], note:"カップにゆとりがある方がずり上がり・ずり下がりしにくい。"
+  },
+  {
+    num:"⑯", title:"ショーツのサイズ合わせ",
+    purpose:"下着全体のフィッティングを完結させる",
+    checks:["ショーツの上から試着","後ろ・横をしっかり履き上げる","鼠蹊部ゴムなしの設計を説明","腰・お尻下の段差が定着することを伝える","洗濯機OK・長持ち（5年以上）の説明"],
+    talks:[], note:"種類：ノーマル・タンガ・ノンワイヤーショーツ（3種）。"
+  },
+  {
+    num:"⑰", title:"ノンワイヤーブラ・meguruの提案",
+    purpose:"ライフスタイルに合わせた選択肢を広げる",
+    checks:["下から履き上げてもらう","バスト上部の圧迫がないか確認","フィット感の好みをお客様に選んでもらう","meguruコットンブラを希望者に案内","アフタービフォーアフター撮影"],
+    talks:[], note:"meguru：「締めつけないのに支える」コンセプト。"
+  }
+];
+
+const FAILURES = [
+  { num:"失敗1", title:"サイズを断定してしまう",
+    ng:"「このサイズですね」「○○カップで間違いないです」",
+    why:"お客様の体・好み・用途によって、同じ採寸値でも正解は変わる。断定はクレームの原因になる。",
+    ok:"「○○サイズと△△サイズ、両方試してみましょう。それぞれの着け心地を比べてみてください」" },
+  { num:"失敗2", title:"カウンセリング前に商品を出す",
+    ng:"来店してすぐ、またはカウンセリング途中で商品を見せ始める",
+    why:"問題点を共有できていない状態で商品を出すと「売り込まれている」と感じさせてしまう。",
+    ok:"⑦容量チェック→⑩数値確認→⑪理想位置の説明まで終えてから商品を出す" },
+  { num:"失敗3", title:"ストラップで調整しようとする",
+    ng:"バストが下がっている→ストラップを短くして引き上げようとする",
+    why:"ストラップはあくまで補助。土台が合っていない問題をストラップで解決しようとしても悪化する。",
+    ok:"「ストラップではなく、まず土台のアンダーを整えてみましょう」" },
+  { num:"失敗4", title:"数字だけでサイズを決める",
+    ng:"トップ−アンダー = ○cmだから○カップと機械的に当てはめる",
+    why:"バストの柔らかさ・流れ方・左右差・体型によって適したサイズは大きく変わる。",
+    ok:"採寸値はスタート地点。必ず試着して容量・脇肉・アンダーを確認してから提案する" },
+  { num:"失敗5", title:"「慣れますよ」と言ってしまう",
+    ng:"「最初は苦しいかもしれませんが、慣れてきますよ」",
+    why:"違和感・苦しさは「合っていないサイン」。慣れさせるものではない。",
+    ok:"「少し苦しい感じがするということは見直した方が良いかもしれません。別のサイズも試してみましょうか」" },
+  { num:"失敗6", title:"お客様の体型のせいにする",
+    ng:"「バストが大きいから仕方ないですね」「体型的に難しいんです」",
+    why:"お客様を傷つけ、ブランドへの信頼を大きく損なう。フィッティング哲学に真っ向から反する。",
+    ok:"「今まで合うブラがなかっただけです。体型は関係ありません。一緒に合うものを探しましょう」" },
+  { num:"失敗7", title:"共感の言葉を忘れる",
+    ng:"技術的な確認は丁寧だが感情的な寄り添いがなく「検査されている」感じを受ける",
+    why:"フィッティングは「体験して納得してもらうこと」が目的。技術だけでは感動が生まれない。",
+    ok:"各ステップで共感の言葉を挟む。特に容量チェック後「今まで合うものがなかったですよね」を必ず使う" },
+  { num:"失敗8", title:"過去のサイズに引っ張られる",
+    ng:"「昔から75Bだから」という言葉に引っ張られて実寸と異なるサイズで進める",
+    why:"体は変化している。昔のサイズが今も正解とは限らない。",
+    ok:"「体は変化しています。今の実寸で合わせることで本当に体に合うものが見つかります」" },
+  { num:"失敗9", title:"着け方を確認せずにサイズ判断する",
+    ng:"試着してもらった直後（お肉を集める前）を見て「サイズが合わない」と判断する",
+    why:"正しくつけ方を行う前の状態では、正確なフィット感は判断できない。",
+    ok:"必ず22ステップのつけ方を案内してからフィットを判断する" }
+];
+
+const CHECKLIST = [
+  { section: "【0】来店〜準備", items: [
+    "笑顔でお迎えできている",
+    "カウンセリングシートをお渡しした",
+    "記入時間を急かしていない"
+  ]},
+  { section: "【1】カウンセリング", items: [
+    "現状のサイズを確認した",
+    "普段の購入方法を聞いた",
+    "お悩みチェック項目を一通り確認した",
+    "「一番のお悩み」を一つ聞けた",
+    "今日の目標を共有した"
+  ]},
+  { section: "【2】好み・サイズ感の確認", items: [
+    "ワイヤーブラの好みを確認した",
+    "複数サイズの可能性があることを説明した",
+    "ノンワイヤーの選択肢も提示した"
+  ]},
+  { section: "【3〜4】ビフォー撮影・My Braチェック", items: [
+    "洋服姿のビフォー撮影を提案した",
+    "写真提供での割引を説明した",
+    "ブラ姿ビフォー撮影を行った"
+  ]},
+  { section: "【5〜7】アンダー・ストラップ・容量チェック", items: [
+    "後ろのずり上がりを確認した",
+    "背中上辺の段差を確認した",
+    "「上辺にゴムのないものを」と伝えた（段差ある場合）",
+    "ストラップの位置を確認した",
+    "「土台で支える、ストラップは補助」と伝えた",
+    "脇肉・脇下・背中のお肉を確認した",
+    "「今まで合うものがなかっただけ」と共感の言葉を伝えた"
+  ]},
+  { section: "【8〜11】計測・理想位置の説明", items: [
+    "アンダー実寸を計測した",
+    "乳間を測った",
+    "乳下がりを確認した",
+    "理想のバスト位置（正三角形）を説明した",
+    "下垂の原因はサイズが合っていないことが多いと伝えた"
+  ]},
+  { section: "【12〜14】ワイヤーブラ提案・試着", items: [
+    "「答え合わせ」として商品を出した",
+    "アンダー実寸目安を基準にした",
+    "複数サイズの可能性を提示した（決めつけなかった）",
+    "22ステップのつけ方を案内してから判断した",
+    "フィット最終判断6点をすべて確認した",
+    "変化をリンクさせて伝えた",
+    "乳間・高さを計測し数値変化を伝えた",
+    "アフター撮影を行った"
+  ]},
+  { section: "【15〜17】スリップ・ショーツ・ノンワイヤー", items: [
+    "スリップを下から履いてもらった",
+    "サイズ2パターンを提案した",
+    "ショーツは上から試着してもらった",
+    "鼠蹊部ゴムなしの設計を説明した",
+    "段差の定着について伝えた",
+    "ノンワイヤーブラを提案した",
+    "フィット感の好みを選んでもらった",
+    "meguruコットンブラを希望者に案内した"
+  ]},
+  { section: "【新人合格ライン】", items: [
+    "流れを止めずに全ステップを進行できた",
+    "決めつけず、選択肢を出せた",
+    "共感の言葉が自然に出た",
+    "お客様から「楽」「分かりやすい」という言葉が出た",
+    "「慣れますよ」「体型のせい」を一切使わなかった"
+  ]}
+];
+
+const UNDER_TABLE = [
+  ["65cm","63〜68cm"],["70cm","68〜73cm"],["75cm","73〜78cm"],
+  ["80cm","78〜83cm"],["85cm","83〜88cm"]
+];
+
+const TROUBLES = [
+  { symptom:"脇肉が出る", cause:"カップ不足 / 脇設計不足", action:"脇からの距離で容量チェック。カップサイズを上げる検討" },
+  { symptom:"ワイヤーが痛い", cause:"カップ不足 / ワイヤー形状不一致", action:"ワイヤーがバスト輪郭に沿っているか確認" },
+  { symptom:"ずれる・安定しない", cause:"アンダーサイズ不一致", action:"アンダーの実寸を計測。動作確認を行う" },
+  { symptom:"苦しい", cause:"サイズが小さい / 補正が強すぎる", action:"アンダー・カップ両方のサイズを見直す" },
+  { symptom:"ストラップ問題", cause:"原因はストラップではなく土台", action:"アンダーの安定・カップ容量を先に確認" },
+  { symptom:"カップ上辺が浮く", cause:"カップ大きすぎ or 容量不足", action:"容量を集めてから判断。パッドの有無も確認" },
+  { symptom:"背中に段差", cause:"アンダー上辺のゴムが食い込んでいる", action:"上辺にゴムのないデザインを提案" },
+  { symptom:"乳間が広くなる", cause:"カップ幅・ワイヤー形状が合っていない", action:"ワイヤー幅・乳間の設計を確認して選び直す" },
+  { symptom:"バストが下がって見える", cause:"アンダーサイズが小さく円周が合っていない", action:"正しい実寸でアンダーを選ぶ。円周が合うと自然に上がる" },
+  { symptom:"肩こり", cause:"ストラップに頼りすぎ", action:"アンダーを正しく下げ、ストラップを緩める" },
+];
+
+const NGOK_GENERAL = [
+  ["「このサイズです」と断定する","「○○サイズと△△サイズ、両方試してみましょう」"],
+  ["「体型的に難しいんです」","「今まで合うブラがなかっただけです」"],
+  ["「慣れますよ」","「苦しいということは見直すサインです」"],
+  ["「バストが大きいから仕方ない」","「ブラの設計の問題です。体型は関係ありません」"],
+  ["「これが正しい状態ですよ」","「どちらのフィット感がお好みですか？」"],
+];
+const NGOK_WEAR = [
+  ["「寄せてください」","「流れているお肉を戻します」"],
+  ["「上げてください」","「下の土台を安定させます」"],
+  ["「きつく締めて」","「支えと呼吸が両立する位置に合わせましょう」"],
+  ["「それで合っています」（試着直後）","「つけ方を整えてから確認しますね」"],
+];
+const EMPATHY_PHRASES = [
+  ["容量不足が分かったとき","「今まで合うサイズがなかったんですよね。これはあなたが悪いのではありません」"],
+  ["合うものが見つかったとき","「さっきお話ししていた変化、出ていますね」"],
+  ["過去サイズにこだわるとき","「体は変化しています。今の実寸で合わせることで本当に合うものが見つかります」"],
+  ["違和感を訴えられたとき","「違和感があるということは見直すサインです。別のサイズも試してみましょう」"],
+  ["フィッティング完了後","「今後はこの状態を基準に選んでいただけると、ずっと楽に着けられます」"],
+];
+
+const STEP22 = [
+  "まずはホックを前で留めます — ブラをお腹のあたりにセットして、ホックを前で留める",
+  "くるっと回して腕を通します — そのままブラをくるっと回して、両腕をストラップに通す",
+  "アンダーベルトの確認 — サイドはぴったり。ホック部分に少し余裕があっても大丈夫",
+  "ストラップの長さを調整 — 目安は「指2本分のゆとり」。肩に食い込まず、浮かない長さに",
+  "着けた直後のカップの状態 — まだ上辺に隙間があっても大丈夫。これから整える",
+  "バストを集めて整えていきます — 流れてしまったお肉を正しい位置に戻していく",
+  "まずは腰・背中・二の腕のお肉をチェック！ — 体に流れている部分から集めていく",
+  "バストの小さい側からスタート — 基本は左右差の小さいほうから整え始める",
+  "カップ下・横の位置を確認 — カップ下横に指が入らない場合はアンダーが小さい可能性も",
+  "体を横にくねらせて準備 — カップ下を持ちながら、身体を横にスライドさせるように曲げる",
+  "腰肉をゲットして起き上がりながら寄せる — 反対の手で腰まで伸ばし、バストへスッとお肉を寄せてくる",
+  "カップ上・ストラップの間を引っ張る — ここから背中のお肉をバストに寄せていく",
+  "背中からバストへスッと持ってくる — 脇は広げずに背中→バストへと滑らかに寄せる",
+  "二の腕の調整も忘れずに — 脇下を通したら、脇を軽く閉じてからバストへ",
+  "カップに収まりきらない部分の調整 — 集めたお肉が上辺に溜まりすぎないようにする",
+  "カップ上辺をトントンと優しく下へ落とす — バスト全体が下に満遍なく入るよう整える",
+  "ストラップを後ろに送って、アンダーを下げる — 仕上げに肩紐を後ろへ。アンダーも下げてフィット感UP！",
+  "左右でシルエットの違いを確認 — 片側だけでもかなり変化が見えるはず",
+  "反対側も同じ順番で整えます — 腰→背中→二の腕の順に集め、最後にストラップ＆アンダーを整える",
+  "初めの隙間がなくなりました — ぴったりフィットしてバストが安定した位置に収まった",
+  "前も横も背中も美しいラインに — 正しく整えることで、見た目も着心地も大きく変わる",
+  "最後は後ろの高さをチェック！ — 前より後ろが2〜3cm低いと、より安定して着けられる",
+];
+
+const PRINCIPLES = [
+  "サイズを「当てる」ことがゴールではない",
+  "「なぜ合わなかったか」をお客様と一緒に理解する",
+  "お客様の体型のせいにしない",
+  "今日の悩みが「改善されている状態」を体感してもらう",
+  "今後の人生で上手にブラを選んでもらえるようになってもらう",
+  "違和感は「慣れ」ではない",
+  "正解は「支えられているのに、意識しない状態」",
+];
+
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+let currentTab = 'Home';
+let currentChapter = null;
+let checkState = {};
+let searchVisible = false;
+
+function loadCheckState() {
+  try { checkState = JSON.parse(localStorage.getItem('vl_checklist') || '{}'); } catch(e) { checkState = {}; }
+}
+function saveCheckState() {
+  try { localStorage.setItem('vl_checklist', JSON.stringify(checkState)); } catch(e) {}
+}
+loadCheckState();
+
+// ═══════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════
+function showTab(tab) {
+  currentTab = tab;
+  hideSearch();
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+  if (tab === 'Home') {
+    document.getElementById('pageHome').classList.add('active');
+    document.getElementById('navHome').classList.add('active');
+    setHeader('フィッティングガイド');
+    hideBack();
+  } else if (tab === 'Flow') {
+    showFlowPage();
+  } else if (tab === 'Checklist') {
+    document.getElementById('pageChecklist').classList.add('active');
+    document.getElementById('navChecklist').classList.add('active');
+    setHeader('フィッティングチェックリスト');
+    hideBack();
+    buildChecklist();
+  } else if (tab === 'Knowledge') {
+    document.getElementById('pageKnowledge').classList.add('active');
+    document.getElementById('navKnowledge').classList.add('active');
+    setHeader('フィッティング知識');
+    hideBack();
+    buildKnowledge();
+  }
+}
+
+function showChapter(id) {
+  currentChapter = id;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('pageDetail').classList.add('active');
+  const ch = CHAPTERS.find(c => c.id === id);
+  setHeader(ch.title);
+  showBack();
+  buildDetail(id);
+  document.getElementById('pageDetail').querySelector('.detail-content').scrollTop = 0;
+  document.querySelector('.main-content').scrollTop = 0;
+}
+
+function goBack() {
+  showTab(currentTab === 'Home' || currentChapter ? 'Home' : currentTab);
+  currentChapter = null;
+}
+
+function showFlowPage() {
+  document.getElementById('pageDetail').classList.add('active');
+  document.getElementById('navFlow').classList.add('active');
+  setHeader('フィッティングフロー 全17ステップ');
+  hideBack();
+  buildFlowPage();
+  document.querySelector('.main-content').scrollTop = 0;
+}
+
+function setHeader(title) {
+  document.getElementById('headerTitle').textContent = title;
+}
+function showBack() { document.getElementById('backBtn').classList.add('show'); }
+function hideBack() { document.getElementById('backBtn').classList.remove('show'); }
+
+// ═══════════════════════════════════════════════════
+//  BUILD HOME
+// ═══════════════════════════════════════════════════
+function buildHome() {
+  const grid = document.getElementById('chapterGrid');
+  grid.innerHTML = CHAPTERS.map(ch => `
+    <div class="chapter-card" onclick="showChapter(${ch.id})">
+      <div class="chapter-num">${ch.id}</div>
+      <div class="chapter-info">
+        <div class="chapter-title">${ch.title}</div>
+        <div class="chapter-sub">${ch.sub}</div>
+      </div>
+      <div class="chapter-arrow">›</div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════
+//  BUILD DETAIL
+// ═══════════════════════════════════════════════════
+function buildDetail(id) {
+  const el = document.getElementById('detailContent');
+  let html = '';
+  if (id === 1) html = buildCh1();
+  else if (id === 2) html = buildCh2();
+  else if (id === 3) html = buildCh3();
+  else if (id === 4) html = buildCh4();
+  else if (id === 5) html = buildCh5();
+  else if (id === 6) html = buildCh6();
+  else if (id === 7) { showTab('Checklist'); return; }
+  else if (id === 8) html = buildCh8();
+  el.innerHTML = html;
+}
+
+function buildFlowPage() {
+  document.getElementById('detailContent').innerHTML = buildCh2();
+}
+
+function buildCh1() {
+  return `
+    <div class="section-block">
+      <div class="section-h2">1-1　VISUAL LABOでのフィッティングの意義</div>
+      <p class="body-text">VISUAL LABOは「代謝を再設計する」サロンです。施術を通じて体の内側から変化を起こすと同時に、毎日身につけるインナーウェアのフィッティングを通じて、お客様の体を外側からも正しく支えます。</p>
+      <p class="body-text">フィッティングは「ブラを売る」行為ではありません。お客様が今まで感じてきた不快感の原因を一緒に理解し、今後の人生で自分に合うものを選べるようになる体験を提供することです。</p>
+    </div>
+    <div class="section-block">
+      <div class="section-h2">1-2　フィッティングの根本7原則</div>
+      ${PRINCIPLES.map((p, i) => `
+        <div class="principle-card">
+          <div class="principle-num">${i+1}</div>
+          <div class="principle-text">${p}</div>
+        </div>`).join('')}
+    </div>
+    <div class="section-block">
+      <div class="section-h2">1-3　数字より「状態」を見る</div>
+      <p class="body-text">採寸値（トップ−アンダーの計算値）はスタート地点に過ぎません。バストの柔らかさ・流れ方・左右差・体型によって、適したサイズは大きく変わります。</p>
+      <p class="body-text">目で見て、手で確認して、お客様自身に感じてもらう——この順番がフィッティングの核心です。</p>
+    </div>
+  `;
+}
+
+function buildCh2() {
+  return FITTING_STEPS.map((s, i) => {
+    const checksHtml = s.checks.map(c => `<li>${c}</li>`).join('');
+    const talksHtml = s.talks.map(t => `
+      <div class="quote-block">
+        <div class="label">声かけ例</div>
+        <p>${t}</p>
+      </div>`).join('');
+    const noteHtml = s.note ? `<div class="note-block"><p>${s.note}</p></div>` : '';
+    return `
+      <div class="step-card">
+        <div class="step-header" onclick="toggleAccordion(this)">
+          <div class="step-num">${s.num}</div>
+          <div class="step-title">${s.title}</div>
+          <div class="step-toggle">▾</div>
+        </div>
+        <div class="step-body">
+          <div class="step-inner">
+            <div class="step-content">
+              <span class="purpose-tag">🎯 ${s.purpose}</span>
+              ${checksHtml ? `<div class="section-h3">確認ポイント</div><ul class="check-list">${checksHtml}</ul>` : ''}
+              ${talksHtml}
+              ${noteHtml}
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function buildCh3() {
+  const underRows = UNDER_TABLE.map(([s, r]) => `<tr><td>${s}</td><td>${r}</td></tr>`).join('');
+  return `
+    <div class="section-block">
+      <div class="section-h2">3-1　アンダーサイズの見極め</div>
+      <p class="body-text">アンダーは「ブラ全体の土台」です。アンダーが合わないと、どれだけ良いカップを使っても正しく支えられません。</p>
+      <div class="section-h3">アンダーサイズ実寸目安</div>
+      <table class="info-table"><thead><tr><th>アンダーサイズ</th><th>実寸の目安</th></tr></thead><tbody>${underRows}</tbody></table>
+      <p class="body-text" style="color:var(--warn);font-weight:700;">⚠️ 「昔のサイズ」「普段買っているサイズ」は一旦リセット。今の体の実寸が唯一の基準です。</p>
+    </div>
+    <div class="section-block">
+      <div class="section-h2">3-2　カップサイズの見極め</div>
+      <table class="info-table"><thead><tr><th>状態</th><th>判断</th></tr></thead><tbody>
+        <tr><td>溢れない・浮かない・押しつぶされていない</td><td>✅ 合っている</td></tr>
+        <tr><td>入れても戻ってくる脇肉</td><td>⚠️ 容量不足のサイン</td></tr>
+        <tr><td>脇下を上げるとお肉が見える</td><td>⚠️ カップ不足</td></tr>
+        <tr><td>ストラップが内側に入り込む</td><td>⚠️ カップ不足の可能性</td></tr>
+        <tr><td>カップ上辺が浮く</td><td>⚠️ カップ大きすぎ or 容量不足</td></tr>
+      </tbody></table>
+    </div>
+    <div class="section-block">
+      <div class="section-h2">3-3　容量チェックの法則</div>
+      <div style="background:var(--navy);color:white;border-radius:10px;padding:1rem;margin-bottom:0.75rem;text-align:center;">
+        <div style="font-size:0.75rem;color:var(--gold-lt);margin-bottom:0.25rem;">容量不足の計算式</div>
+        <div style="font-size:1.05rem;font-weight:700;">カップと脇の空間 <span style="color:var(--gold);">1cm ≈ 1カップ不足</span></div>
+        <div style="font-size:0.78rem;color:rgba(255,255,255,0.6);margin-top:0.3rem;">例：5cm空いている → 約5カップ小さい</div>
+      </div>
+      <ul class="bullet-list">
+        <li>背中も大きく出ている場合はさらに+1カップ</li>
+        <li>まず集めずにカップだけでピッタリめを合わせる</li>
+        <li>次に腰・背中のお肉を入れてもらう</li>
+        <li>溢れた場合はサイズアップを提案（こちらから決めない）</li>
+      </ul>
+    </div>
+    <div class="section-block">
+      <div class="section-h2">3-4　身幅・ワイヤー構造</div>
+      <table class="info-table"><thead><tr><th>サイズ帯</th><th>ワイヤー構造の特徴</th></tr></thead><tbody>
+        <tr><td>L / M / N カップ</td><td>ワイヤー幅は同じ → 深さだけが上がっていく</td></tr>
+        <tr><td>それ以下のサイズ</td><td>階段状でワイヤー番手が変わる</td></tr>
+        <tr><td>平胴・薄いナチュラルタイプ</td><td>脇を拾いにくい場合がある</td></tr>
+      </tbody></table>
+      <p class="body-text">脇を覆うとカップ上辺が空く場合は、「下にパッドを足す」か「脇の包み込みを諦める」の2択をお客様に提示してください。</p>
+    </div>
+    <div class="section-block">
+      <div class="section-h2">3-5　理想のバスト位置</div>
+      <div style="background:var(--cream);border-radius:10px;padding:1rem;margin-bottom:0.75rem;text-align:center;">
+        <div style="font-size:0.8rem;color:var(--slate);margin-bottom:0.5rem;">理想の状態</div>
+        <div style="font-size:0.95rem;font-weight:700;color:var(--navy);">鎖骨の真ん中 × 左右バストトップ<br>＝ コンパクトな正三角形</div>
+      </div>
+      <p class="body-text" style="color:var(--ok);font-weight:700;">下垂が気になっている方の多くは、ブラが小さく円周が合っていないだけ。円周が合うとスポッと収まり、自然に上に引き上げられます。</p>
+    </div>
+  `;
+}
+
+function buildCh4() {
+  const step22Html = STEP22.map((s, i) => `
+    <div style="display:flex;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid var(--border);align-items:flex-start;">
+      <div style="width:24px;height:24px;background:var(--navy);color:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0;">${i+1}</div>
+      <div style="font-size:0.82rem;line-height:1.6;color:var(--text);">${s}</div>
+    </div>`).join('');
+
+  return `
+    <div class="section-block">
+      <div class="section-h2">4-1　基本7ステップ</div>
+      <table class="info-table"><thead><tr><th>Step</th><th>内容</th></tr></thead><tbody>
+        <tr><td>1</td><td>前でホックを留める</td></tr>
+        <tr><td>2</td><td>ストラップは緩めたまま</td></tr>
+        <tr><td>3</td><td>回して上げる</td></tr>
+        <tr><td>4</td><td>腰→背中のお肉を前へ</td></tr>
+        <tr><td>5</td><td>背中→二の腕のお肉をカップへ</td></tr>
+        <tr><td>6</td><td>バスト前を起こし、アンダーを下げ切る</td></tr>
+        <tr><td>7</td><td>最後にストラップ調整（指2本のゆとり）</td></tr>
+      </tbody></table>
+    </div>
+    <div class="section-block">
+      <div class="section-h2">4-2　詳細22ステップ</div>
+      <p class="body-text">お客様の試着時に一つひとつ案内します。</p>
+      <div style="margin-top:0.75rem;">${step22Html}</div>
+    </div>
+    <div class="section-block">
+      <div class="section-h2">4-3　指導時の言葉ルール</div>
+      <table class="ngok-table">
+        <tr><th class="th-ng">❌ 使わない表現</th><th class="th-ok">✅ 使う表現</th></tr>
+        <tr><td class="td-ng">「寄せてください」</td><td class="td-ok">「流れているお肉を戻します」</td></tr>
+        <tr><td class="td-ng">「上げてください」</td><td class="td-ok">「下の土台を安定させます」</td></tr>
+        <tr><td class="td-ng">「苦しいですか？慣れますよ」</td><td class="td-ok">「少し苦しいなら、見直しましょう」</td></tr>
+        <tr><td class="td-ng">「このサイズで合っています」</td><td class="td-ok">「2サイズ比べてみましょう」</td></tr>
+      </table>
+    </div>
+  `;
+}
+
+function buildCh5() {
+  const failHtml = FAILURES.map((f, i) => `
+    <div class="failure-card">
+      <div class="failure-header" onclick="toggleAccordion(this)">
+        <div class="failure-badge">${f.num}</div>
+        <div class="failure-title">${f.title}</div>
+        <div class="step-toggle">▾</div>
+      </div>
+      <div class="failure-body">
+        <div class="failure-inner">
+          <div class="failure-content">
+            <div class="row-ng"><span class="row-label">NG</span><span>${f.ng}</span></div>
+            <div class="row-why"><span class="row-label">なぜ</span><span>${f.why}</span></div>
+            <div class="row-ok"><span class="row-label">OK</span><span>${f.ok}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+
+  const confusionRows = [
+    ["「盛れているから合っている」","「溢れているのは合っていないサインです」"],
+    ["「苦しいのが補整ブラ」","「支えられているのに苦しくないのが正しい状態です」"],
+    ["「ストラップを締めれば解決する」","「土台から整えましょう」"],
+    ["「何十年もこのサイズ」","「体は変化しています。今の実寸で合わせてみましょう」"],
+    ["「私の体型が悪い」","「合うブラがなかっただけです」"],
+  ].map(([ng,ok]) => `<tr><td class="td-ng">${ng}</td><td class="td-ok">${ok}</td></tr>`).join('');
+
+  return `
+    <div class="section-block">
+      <div class="section-h2">よくある失敗パターン（9種）</div>
+      ${failHtml}
+    </div>
+    <div class="section-block">
+      <div class="section-h2">お客様の誤解への対応</div>
+      <table class="ngok-table">
+        <tr><th class="th-ng">お客様の思い込み</th><th class="th-ok">スタッフの正しい対応</th></tr>
+        ${confusionRows}
+      </table>
+    </div>
+  `;
+}
+
+function buildCh6() {
+  const troubleHtml = TROUBLES.map(t => `
+    <div class="trouble-card">
+      <div class="trouble-symptom">🔍 ${t.symptom}</div>
+      <div class="trouble-detail">
+        <div class="trouble-row"><span class="trouble-label">原因：</span><span>${t.cause}</span></div>
+        <div class="trouble-row"><span class="trouble-label">対処：</span><span>${t.action}</span></div>
+      </div>
+    </div>`).join('');
+
+  return `
+    <div class="section-block">
+      <div class="section-h2">6-1　症状別トラブル対応表</div>
+      ${troubleHtml}
+    </div>
+    <div class="section-block">
+      <div class="section-h2">6-2　フィット最終判断チェック</div>
+      <div class="section-h3">見た目</div>
+      <ul class="check-list">
+        <li>アンダーは水平〜やや下</li>
+        <li>ワイヤーはバスト輪郭に沿っている</li>
+        <li>段差が出ていない</li>
+        <li>脇下を上げてもお肉が見えない</li>
+      </ul>
+      <div class="section-h3">動作確認</div>
+      <ul class="check-list">
+        <li>腕上げ・ひねり・深呼吸でズレ・苦しさが出ない</li>
+      </ul>
+      <div class="section-h3">感覚確認</div>
+      <ul class="check-list">
+        <li>「楽ですね」という言葉が出るか</li>
+        <li>無意識に触っていないか（触っていない＝正解）</li>
+      </ul>
+    </div>
+  `;
+}
+
+function buildCh8() {
+  const buildNgOk = (rows) => `
+    <table class="ngok-table">
+      <tr><th class="th-ng">❌ 使わない表現（NG）</th><th class="th-ok">✅ 使う表現（OK）</th></tr>
+      ${rows.map(([ng,ok]) => `<tr><td class="td-ng">${ng}</td><td class="td-ok">${ok}</td></tr>`).join('')}
+    </table>`;
+
+  const empathyRows = EMPATHY_PHRASES.map(([timing, phrase]) => `
+    <div class="step-card" style="margin-bottom:0.75rem;">
+      <div style="padding:0.65rem 1rem;">
+        <div style="font-size:0.72rem;color:var(--gold);font-weight:700;margin-bottom:0.3rem;">${timing}</div>
+        <div style="font-size:0.84rem;color:var(--slate);font-style:italic;line-height:1.6;">${phrase}</div>
+      </div>
+    </div>`).join('');
+
+  return `
+    <div class="section-block">
+      <div class="section-h2">8-1　接客全般のNG・OK</div>
+      ${buildNgOk(NGOK_GENERAL)}
+    </div>
+    <div class="section-block">
+      <div class="section-h2">8-2　つけ方指導のNG・OK</div>
+      ${buildNgOk(NGOK_WEAR)}
+    </div>
+    <div class="section-block">
+      <div class="section-h2">8-3　共感の言葉フレーズ集</div>
+      ${empathyRows}
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════
+//  CHECKLIST
+// ═══════════════════════════════════════════════════
+function buildChecklist() {
+  let totalItems = 0;
+  const html = CHECKLIST.map((sec, si) => {
+    const items = sec.items.map((item, ii) => {
+      const key = `${si}-${ii}`;
+      totalItems++;
+      const checked = checkState[key] ? 'checked' : '';
+      return `<div class="cl-item ${checked}" onclick="toggleCheck('${key}', this)">
+        <div class="cl-checkbox"></div>
+        <div class="cl-text">${item}</div>
+      </div>`;
+    }).join('');
+    return `<div class="cl-section-title">${sec.section}</div>${items}`;
+  }).join('');
+
+  document.getElementById('checklistContent').innerHTML = html;
+  document.getElementById('clTotal').textContent = totalItems;
+  updateProgress();
+}
+
+function toggleCheck(key, el) {
+  el.classList.toggle('checked');
+  checkState[key] = el.classList.contains('checked');
+  saveCheckState();
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = document.querySelectorAll('.cl-item').length;
+  const done = document.querySelectorAll('.cl-item.checked').length;
+  document.getElementById('clDone').textContent = done;
+  document.getElementById('clTotal').textContent = total;
+  const pct = total ? (done / total) * 100 : 0;
+  document.getElementById('clBar').style.width = pct + '%';
+}
+
+function resetChecklist() {
+  if (!confirm('チェックリストをリセットしますか？')) return;
+  checkState = {};
+  saveCheckState();
+  document.querySelectorAll('.cl-item').forEach(el => el.classList.remove('checked'));
+  updateProgress();
+}
+
+// ═══════════════════════════════════════════════════
+//  KNOWLEDGE
+// ═══════════════════════════════════════════════════
+const KN_SECTIONS = [
+  { id: 'kn-principles', label: '根本思想' },
+  { id: 'kn-size', label: 'サイズ計算' },
+  { id: 'kn-trouble', label: 'トラブル' },
+  { id: 'kn-ngok', label: 'NG・OK' },
+];
+
+function buildKnowledge() {
+  const nav = document.getElementById('knowledgeNav');
+  nav.innerHTML = KN_SECTIONS.map((s, i) => `
+    <button class="kn-btn ${i===0?'active':''}" onclick="showKnSection('${s.id}', this)">${s.label}</button>
+  `).join('');
+
+  const cont = document.getElementById('knowledgeContent');
+  cont.innerHTML = `
+    <div id="kn-principles" class="kn-section active">
+      ${PRINCIPLES.map((p, i) => `
+        <div class="principle-card">
+          <div class="principle-num">${i+1}</div>
+          <div class="principle-text">${p}</div>
+        </div>`).join('')}
+    </div>
+    <div id="kn-size" class="kn-section">
+      <div class="section-h3" style="padding:0 0 0.5rem;">アンダーサイズ実寸目安</div>
+      <table class="info-table"><thead><tr><th>アンダーサイズ</th><th>実寸の目安</th></tr></thead>
+        <tbody>${UNDER_TABLE.map(([s,r]) => `<tr><td>${s}</td><td>${r}</td></tr>`).join('')}</tbody>
+      </table>
+      <div style="background:var(--navy);color:white;border-radius:10px;padding:1rem;margin:0.75rem 0;text-align:center;">
+        <div style="font-size:0.75rem;color:var(--gold-lt);">容量チェックの法則</div>
+        <div style="font-size:1rem;font-weight:700;margin-top:0.25rem;">脇との空間 <span style="color:var(--gold);">1cm ≈ 1カップ不足</span></div>
+      </div>
+    </div>
+    <div id="kn-trouble" class="kn-section">
+      ${TROUBLES.map(t => `
+        <div class="trouble-card">
+          <div class="trouble-symptom">${t.symptom}</div>
+          <div class="trouble-detail">
+            <div class="trouble-row"><span class="trouble-label">原因：</span><span>${t.cause}</span></div>
+            <div class="trouble-row"><span class="trouble-label">対処：</span><span>${t.action}</span></div>
+          </div>
+        </div>`).join('')}
+    </div>
+    <div id="kn-ngok" class="kn-section">
+      <div class="section-h3" style="padding:0 0 0.5rem;">接客全般</div>
+      <table class="ngok-table">
+        <tr><th class="th-ng">❌ NG</th><th class="th-ok">✅ OK</th></tr>
+        ${NGOK_GENERAL.map(([ng,ok]) => `<tr><td class="td-ng">${ng}</td><td class="td-ok">${ok}</td></tr>`).join('')}
+      </table>
+      <div class="section-h3" style="padding:0.5rem 0;">つけ方指導</div>
+      <table class="ngok-table">
+        <tr><th class="th-ng">❌ NG</th><th class="th-ok">✅ OK</th></tr>
+        ${NGOK_WEAR.map(([ng,ok]) => `<tr><td class="td-ng">${ng}</td><td class="td-ok">${ok}</td></tr>`).join('')}
+      </table>
+    </div>
+  `;
+}
+
+function showKnSection(id, btn) {
+  document.querySelectorAll('.kn-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.kn-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════
+//  SEARCH
+// ═══════════════════════════════════════════════════
+const SEARCH_INDEX = [
+  ...CHAPTERS.map(c => ({ chapter: `Chapter ${c.id}`, title: c.title, snippet: c.sub, action: () => showChapter(c.id) })),
+  ...FITTING_STEPS.map(s => ({ chapter: 'フィッティングフロー', title: `${s.num} ${s.title}`, snippet: s.purpose + ' ' + s.checks.join(' '), action: () => { showTab('Flow'); } })),
+  ...FAILURES.map(f => ({ chapter: 'よくある失敗', title: `${f.num} ${f.title}`, snippet: f.ng + ' ' + f.why, action: () => showChapter(5) })),
+  ...TROUBLES.map(t => ({ chapter: 'トラブル診断', title: t.symptom, snippet: t.cause + ' → ' + t.action, action: () => showChapter(6) })),
+  ...PRINCIPLES.map((p, i) => ({ chapter: 'フィッティング根本思想', title: `原則${i+1}`, snippet: p, action: () => showChapter(1) })),
+];
+
+function toggleSearch() {
+  searchVisible = !searchVisible;
+  document.getElementById('searchBar').classList.toggle('show', searchVisible);
+  if (searchVisible) {
+    document.getElementById('searchInput').focus();
+    document.getElementById('searchInput').value = '';
+    document.getElementById('searchResultsPage').style.display = 'none';
+  } else {
+    document.getElementById('searchResultsPage').style.display = 'none';
+  }
+}
+
+function hideSearch() {
+  searchVisible = false;
+  document.getElementById('searchBar').classList.remove('show');
+  document.getElementById('searchResultsPage').style.display = 'none';
+}
+
+function doSearch(q) {
+  const resPage = document.getElementById('searchResultsPage');
+  const resEl = document.getElementById('searchResults');
+  if (!q.trim()) { resPage.style.display = 'none'; return; }
+
+  const terms = q.toLowerCase().split(/\s+/);
+  const results = SEARCH_INDEX.filter(item => {
+    const text = (item.title + ' ' + item.snippet + ' ' + item.chapter).toLowerCase();
+    return terms.every(t => text.includes(t));
+  }).slice(0, 12);
+
+  resPage.style.display = 'block';
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+
+  const highlight = (str) => {
+    let s = str;
+    terms.forEach(t => {
+      const re = new RegExp(`(${t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+      s = s.replace(re, '<mark>$1</mark>');
+    });
+    return s;
+  };
+
+  if (results.length === 0) {
+    resEl.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--text-lt);font-size:0.85rem;">「${q}」に一致する結果が見つかりませんでした</div>`;
+    return;
+  }
+
+  resEl.innerHTML = results.map(r => `
+    <div class="search-result-item" onclick="(${r.action.toString()})();hideSearch();">
+      <div class="sr-chapter">${r.chapter}</div>
+      <div class="sr-title">${highlight(r.title)}</div>
+      <div class="sr-snippet">${highlight(r.snippet.slice(0, 80))}…</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════
+//  ACCORDION
+// ═══════════════════════════════════════════════════
+function toggleAccordion(header) {
+  const body = header.nextElementSibling;
+  const toggle = header.querySelector('.step-toggle');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  if (toggle) toggle.classList.toggle('open', !isOpen);
+}
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+buildHome();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
